@@ -1,3 +1,4 @@
+import os
 import discord
 from discord.ext import tasks
 import datetime
@@ -10,7 +11,14 @@ np.random.seed()
 intents = discord.Intents(messages=True)
 intents.members = True
 client = discord.Client(intents=discord.Intents.all()) #fuck the intents system tbh idc
-jav_titles = np.asarray(pd.read_csv('/home/eric/code/degenbot/some_jav_titles.csv')).flatten()
+
+#so that degenbot will always look in its own directory for its files, no matter where cwd is
+bot_path = os.path.abspath(__file__)
+dir_name = os.path.dirname(bot_path)
+os.chdir(dir_name)
+print('current directory:', dir_name)
+
+jav_titles = np.asarray(pd.read_csv('some_jav_titles.csv')).flatten()
 #there was no reason to do this in pandas and numpy, it was just for the meme.
 print(jav_titles, jav_titles.size)
 print("inited")
