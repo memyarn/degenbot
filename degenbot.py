@@ -6,6 +6,16 @@ import asyncio
 import re
 import pandas as pd #xd hehe
 import numpy as np  #xd hehe
+import logging
+import sys
+
+#because systemd is a bastard and won't display python print() in journalctl:
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+formatter = logging.Formatter(fmt="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+handler = logging.StreamHandler(stream=sys.stdout)
+handler.setFormatter(formatter)
+log.addHandler(handler)
 
 np.random.seed()
 intents = discord.Intents(messages=True)
@@ -16,12 +26,12 @@ client = discord.Client(intents=discord.Intents.all()) #fuck the intents system 
 bot_path = os.path.abspath(__file__)
 dir_name = os.path.dirname(bot_path)
 os.chdir(dir_name)
-print('current directory:', dir_name)
+log.info('current directory: ' + dir_name)
 
 jav_titles = np.asarray(pd.read_csv('some_jav_titles.csv')).flatten()
 #there was no reason to do this in pandas and numpy, it was just for the meme.
-print(jav_titles, jav_titles.size)
-print("inited")
+log.info(str(jav_titles) + ', size: ' + str(jav_titles.size))
+log.info('initization complete, ready to post!')
 
 #903796962615242812 is #degeneral
 #539959039967232002 is #degenerates
@@ -49,13 +59,12 @@ async def post_lunchtime_jav():
 async def wait_for_work_to_be_over():
 	it_is_time = False
 	while not it_is_time:
-		str_time = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
 		if datetime.datetime.now().hour == 17:  # 24 hour format
-			print(str_time, "The hour is upon us.")
+			log.info('The hour is upon us.')
 			it_is_time = True
 			return
 		else:
-			print(str_time, "It is not yet time to strike.")
+			log.info('It is not yet time to strike.')
 		
 		await asyncio.sleep(420.69)
 
@@ -63,13 +72,12 @@ async def wait_for_work_to_be_over():
 async def wait_for_lunch():
 	lunch_time = False
 	while not lunch_time:
-		str_time = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
 		if datetime.datetime.now().hour == 12:  # 24 hour format
-			print(str_time, "I am munching on snacks in the break room. I feel liberated.")
+			log.info('I am munching on snacks in the break room. I feel liberated.')
 			lunch_time = True
 			return
 		else:
-			print(str_time, "Lunch hour has not yet arrived.")
+			log.info('Lunch hour has not yet arrived.')
 		
 		await asyncio.sleep(420.69)
 
@@ -77,10 +85,10 @@ async def wait_for_lunch():
 async def on_ready():
 	if not post_jav.is_running(): #just in case i accidentally run more than one
 		post_jav.start()
-		print('post-work jav shitposting service enabled')
+		log.info('post-work jav shitposting service enabled')
 	if not post_lunchtime_jav.is_running():
 		post_lunchtime_jav.start()
-		print('lunchtime jav shitposting service enabled')
+		log.info('lunchtime jav shitposting service enabled')
 
 with open('discord_secret.txt', 'r') as secret_file:
     secret = secret_file.read().rstrip()
