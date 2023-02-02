@@ -3,7 +3,6 @@ from discord.ext import tasks
 import datetime
 import asyncio
 import re
-import jsonpickle
 import pandas as pd #xd hehe
 import numpy as np  #xd hehe
 
